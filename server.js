@@ -8,7 +8,7 @@ http.createServer(function (request, response) {
     response.writeHead(200, {'Content-Type': 'text/plain'});
 
     // 发送响应数据 "Hello World"
-    response.end('Hello World\n');
+    response.end('Hello World(这是一个gulp的browser-sync实现的代理服务器)\n');
 }).listen(8888);
 
 // 终端打印如下信息
