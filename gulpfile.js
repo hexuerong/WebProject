@@ -16,7 +16,7 @@ gulp.task("task1",function(){
         files:['**'],
         server:{
             baseDir:'./',  // 设置服务器的根目录
-            index:'projectResource/src/mainWindow/main.html' // 指定默认打开的文件
+            index:'app/projectResource/src/mainWindow/main.html' // 指定默认打开的文件
         },
         port:8050  // 指定访问服务器的端口号
     });
