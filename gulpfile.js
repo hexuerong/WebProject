@@ -22,14 +22,14 @@ gulp.task("task1",function(){
     });
 }); */
 // 设置任务---使用代理
-/* gulp.task('browser-sync', function () {
+gulp.task('browser-sync', function () {
     browserSync.init({
         // files:['**'],
         proxy:'127.0.0.1:8888', // 设置本地服务器的地址        
         // proxy:'127.0.0.1', // 设置本地服务器的地址
         // port:8888  // 设置访问的端口号
     });
-}); */
+});
 /* // 编译 SASS & 自动注入到浏览器
 gulp.task('sass', function () {
     return gulp.src('scss/styles.scss')
