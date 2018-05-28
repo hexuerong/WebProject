@@ -11,7 +11,7 @@ gulp.task("task1",function(){
 });
 
 // 设置任务---架设静态服务器
-/* gulp.task('browser-sync', function () {
+gulp.task('browser-sync-static', function () {
     browserSync.init({
         files:['**'],
         server:{
@@ -20,7 +20,7 @@ gulp.task("task1",function(){
         },
         port:8050  // 指定访问服务器的端口号
     });
-}); */
+});
 // 设置任务---使用代理
 gulp.task('browser-sync', function () {
     browserSync.init({
