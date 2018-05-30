@@ -17,7 +17,7 @@ gulp.task('default', function() {
 });
 
 // 设置任务---架设静态服务器
-gulp.task('browser-sync-static', function () {
+gulp.task('browser-sync-static', function (callback) {
     browserSync.init({
         files:['**'],
         server:{
@@ -26,6 +26,7 @@ gulp.task('browser-sync-static', function () {
         },
         port:8050  // 指定访问服务器的端口号
     });
+    callback();
 });
 // 设置任务---使用代理
 gulp.task('browser-sync', function () {
@@ -107,10 +108,11 @@ gulp.task('minifyJS1', ['clean'], function() {//执行压缩前，先删除文�
 
 //终极版本
 //当自己的less文件发生改变时，自动编译并拼接然后压缩
-gulp.task('watchLess',function(){
+gulp.task('watchLess',function(callback){
     //由于里面的任务会异步地执行，并不知道哪个任务先结束，有三种解决方式：
     //1.回调函数；2.返回流；3.返回一个promise
-    gulp.watch('app/projectResource/src/mainWindow/less/**/*.less',['complieLess','concatCss'])
+    gulp.watch('app/projectResource/src/mainWindow/less/**/*.less',['complieLess','concatCss']);
+    callback();
 });
 gulp.task('complieLess',function(callback){//编译所有的less
     var stream = gulp.src('app/projectResource/src/mainWindow/less/**/*.less')
@@ -138,7 +140,7 @@ gulp.task('concatCss',['complieLess'],function(){//合并所有的css并压缩
     return stream;
 });
 //当自己的less文件发生改变时，自动编译并拼接然后压缩，且架设静态服务器同步浏览器刷新
-gulp.task('watchLess-sync',function(){
+gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
     
 });
 
