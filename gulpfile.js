@@ -98,7 +98,7 @@ gulp.task('minifyJsTest',function(){
 });
 gulp.task('clean', function(cb) {//删除文件夹里的内容
     // del(['/dist/css', '/dist/js'], cb)
-    del(['dist/js/*.js'], cb)
+    del(['dist/js/*.js'], cb);
 });
 gulp.task('minifyJS1', ['clean'], function() {//执行压缩前，先删除文件夹里的内容
     // gulp.start('minifyJsTest', 'minifyjs');    
@@ -131,9 +131,6 @@ gulp.task('cleanCss', function(callback) {//删除文件夹里的内容
 gulp.task('concatCss',['complieLess'],function(){//合并所有的css并压缩
     var stream = gulp.src('dist/css/**/*.css')
         .pipe(concat('mainWindow.min.css'))
-        // .pipe(gulp.dest('dist'))        
-        // .pipe(rename({suffix: '.min'}))   //rename压缩后的文件名
-
         .pipe(cssmin())//兼容IE7及以下需设置compatibility属性
         .pipe(cssmin({compatibility: 'ie7'}))
         .pipe(gulp.dest('dist'));
