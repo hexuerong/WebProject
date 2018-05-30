@@ -1,0 +1,12 @@
+html,
+body {
+  background-color: #ccc;
+  color: #ffffff;
+  border: 1px solid #333333;
+}
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+}
