@@ -1,0 +1,40 @@
+{
+  "devDependencies": {
+    "browser-sync": "^2.24.4",
+    "del": "^3.0.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-less": "^3.5.0",
+    "gulp-minify-css": "^1.2.4",
+    "gulp-notify": "^3.2.0",
+    "gulp-plumber": "^1.2.0",
+    "gulp-rename": "^1.2.3",
+    "gulp-sourcemaps": "^2.6.4",
+    "gulp-start": "^1.0.1",
+    "gulp-uglify": "^3.0.0",
+    "node-dev": "^3.1.3"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "name": "webproject",
+  "description": "This is a study project of node,less,gulp and so on.\r 这个项目将以node js写后端，将用less写样式，运用gulp工具构建项目。",
+  "version": "1.0.0",
+  "main": "gulpfile.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hexuerong/WebProject.git"
+  },
+  "keywords": [
+    "gulp",
+    "less",
+    "browser-sync",
+    "es6"
+  ],
+  "author": "hexuerong",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/hexuerong/WebProject/issues"
+  },
+  "homepage": "https://github.com/hexuerong/WebProject#readme"
+}
