@@ -15,9 +15,6 @@ gulp.task('default', function() {
     // 将你的默认的任务代码放在这
     console.log("default task is completed!");
 });
-gulp.task("task1",function(){
-    console.log("task1 is completed!");
-});
 
 // 设置任务---架设静态服务器
 gulp.task('browser-sync-static', function () {
@@ -41,9 +38,9 @@ gulp.task('browser-sync', function () {
 });
 //编译单个less文件
 gulp.task('testLess1',function(){
-    gulp.src('/app/projectResource/src/mainWindow/less/main.less')
+    gulp.src('app/projectResource/src/mainWindow/less/main.less')
         .pipe(less())
-        .pipe(gulp.dest('/dist/css/'));
+        .pipe(gulp.dest('dist/css'));
 });
 //编译多个less文件
 gulp.task('testLess2',function(){
