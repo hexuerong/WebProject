@@ -108,27 +108,34 @@ gulp.task('minifyJS1', ['clean'], function() {//执行压缩前，先删除文�
 //终极版本
 //当自己的less文件发生改变时，自动编译并拼接然后压缩
 gulp.task('watchLess',function(){
+    //由于里面的任务会异步地执行，并不知道哪个任务先结束，有三种解决方式：
+    //1.回调函数；2.返回流；3.返回一个promise
     gulp.watch('app/projectResource/src/mainWindow/less/**/*.less',['complieLess','concatCss'])
 });
-gulp.task('complieLess',function(){//编译所有的less
-    gulp.src('app/projectResource/src/mainWindow/less/**/*.less')
+gulp.task('complieLess',function(callback){//编译所有的less
+    var stream = gulp.src('app/projectResource/src/mainWindow/less/**/*.less')
         .pipe(plumber({errorHandler:notify.onError('Error:<%=error.message%>')}))
         .pipe(less())
-        .pipe(gulp.dest('dist/css'))
+        .pipe(gulp.dest('dist/css'));
+
+    // callback();//返回一个stream或者执行一个回调来通知此任务已经结束
+    return stream;
 });
-gulp.task('cleanCss', function(cb) {//删除文件夹里的内容
-    // del(['/dist/css', '/dist/js'], cb)
-    del(['dist/mainWindow.min.css'], cb)
+gulp.task('cleanCss', function(callback) {//删除文件夹里的内容
+    // del(['/dist/css', '/dist/js'], callback)
+    del(['dist/mainWindow.min.css'], callback);
 });
-gulp.task('concatCss',function(){//合并所有的css并压缩
-    gulp.src('dist/css/**/*.css')
+//定义一个依赖，complieLess必须在concatCss执行前完成
+gulp.task('concatCss',['complieLess'],function(){//合并所有的css并压缩
+    var stream = gulp.src('dist/css/**/*.css')
         .pipe(concat('mainWindow.min.css'))
         // .pipe(gulp.dest('dist'))        
         // .pipe(rename({suffix: '.min'}))   //rename压缩后的文件名
 
-        // .pipe(cssmin())//兼容IE7及以下需设置compatibility属性
-        // .pipe(cssmin({compatibility: 'ie7'}))
-        .pipe(gulp.dest('dist'))
+        .pipe(cssmin())//兼容IE7及以下需设置compatibility属性
+        .pipe(cssmin({compatibility: 'ie7'}))
+        .pipe(gulp.dest('dist'));
+    return stream;
 });
 //当自己的less文件发生改变时，自动编译并拼接然后压缩，且架设静态服务器同步浏览器刷新
 gulp.task('watchLess-sync',function(){
