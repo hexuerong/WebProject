@@ -6,6 +6,10 @@ var sourcemaps = require('gulp-sourcemaps');
 //当发生异常时提示错误
 var notify = require('gulp-notify');
 var plumber = require('gulp-plumber');
+var concat = require('gulp-concat'),//拼接文件
+    uglify = require('gulp-uglify'),//压缩文件
+    rename = require('gulp-rename'),//重命名文件
+    del = require('del');//删除文件
 
 gulp.task('default', function() {
     // 将你的默认的任务代码放在这
@@ -86,7 +90,22 @@ gulp.task('testWatch',function(){
     gulp.watch('src/**/*.less',['testLess6']);
 });
 
-
+gulp.task('minifyJsTest',function(){
+    gulp.src('app/common/evol-colorpicker.js')
+        .pipe(plumber({errorHandler:notify.onError('Error:<%=error.message%>')}))
+        .pipe(gulp.dest('dist/js'))//输出到文件夹
+        .pipe(rename({suffix: '.min'}))   //rename压缩后的文件名
+        .pipe(uglify())    //压缩
+        .pipe(gulp.dest('dist/js'));  //输出
+});
+gulp.task('clean', function(cb) {//删除文件夹里的内容
+    // del(['/dist/css', '/dist/js'], cb)
+    del(['dist/js/*.js'], cb)
+});
+gulp.task('minifyJS1', ['clean','minifyJsTest'], function() {//执行压缩前，先删除文件夹里的内容
+    // gulp.start('minifyJsTest', 'minifyjs');    
+    // gulp.start('minifyJsTest');
+});
 
 
 /* // 编译 SASS & 自动注入到浏览器
