@@ -1,5 +1,12 @@
 var gulp = require("gulp");
 var browserSync = require("browser-sync").create();
+//gulp-load-plugins这个插件能自动帮你加载package.json文件里的 gulp 插件,
+//它并不会一开始就加载所有package.json里的gulp插件，而是在我们需要用到某个插件的时候，才去加载那个插件。 
+var plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
+//或是：
+//var gulpLoadPlugins = require('gulp-load-plugins');
+//var plugins = gulpLoadPlugins();
+// 要使用gulp-clone和gulp-clean-css这两个插件的时候，就可以使用plugins.clone和plugins.cleanCss来代替了,也就是原始插件名去掉gulp-前缀，之后再转换为驼峰命名。 
 var less = require("gulp-less");
 var cssmin = require('gulp-minify-css');
 var sourcemaps = require('gulp-sourcemaps');
