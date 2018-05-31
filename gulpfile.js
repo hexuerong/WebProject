@@ -129,7 +129,9 @@ gulp.task('cleanCss', function(callback) {//删除文件夹里的内容
 });
 //定义一个依赖，complieLess必须在concatCss执行前完成
 gulp.task('concatCss',['complieLess'],function(){//合并所有的css并压缩
-    var stream = gulp.src('dist/css/**/*.css')
+    // var stream = gulp.src('dist/css/**/*.css')
+    //保证一个先后顺序
+    var stream = gulp.src(['dist/css/top.css','dist/css/main.css'])    
         .pipe(concat('mainWindow.min.css'))
         .pipe(cssmin())//兼容IE7及以下需设置compatibility属性
         .pipe(cssmin({compatibility: 'ie7'}))
