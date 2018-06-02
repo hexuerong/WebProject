@@ -100,3 +100,19 @@ gulp.task('watchLess',function(callback){
 gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
     
 });
+/**
+ * es转换为es5
+ */
+gulp.task('toes5',function(){
+    var stream = gulp.src('project/scripts/**/*.js')
+        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))    
+        .pipe(plugins.babel())
+        .pipe(gulp.dest('dist/scripts'));
+    return stream;
+});
+/**
+ * 监听es6文件变化，转换为es5
+ */
+gulp.task('watchES6',function(){
+    gulp.watch('project/scripts/**/*.js',['toes5']);
+});
