@@ -12,8 +12,9 @@ const cssConfig = {
 const jsConfig = {
 
 }
-
-// 设置任务---架设静态服务器
+/**
+ * 设置任务---架设静态服务器
+ */
 gulp.task('browser-sync-static', function (callback) {
     browserSync.init({
         files:['**'],
@@ -25,7 +26,9 @@ gulp.task('browser-sync-static', function (callback) {
     });
     callback();//回调是为了告知任务结束
 });
-// 设置任务---使用代理
+/**
+ * 设置任务---使用代理
+ */
 gulp.task('browser-sync', function () {
     browserSync.init({
         // files:['**'],
@@ -34,7 +37,9 @@ gulp.task('browser-sync', function () {
         // port:8888  // 设置访问的端口号
     });
 });
-
+/**
+ * 压缩单个js
+ */
 gulp.task('minifyJsTest',function(){
     gulp.src('project/scripts/main.js')
         .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
@@ -43,14 +48,9 @@ gulp.task('minifyJsTest',function(){
         .pipe(plugins.uglify())    //压缩js
         .pipe(gulp.dest('dist/scripts'));  //输出
 });
-
-//当自己的less文件发生改变时，自动编译并拼接然后压缩
-gulp.task('watchLess',function(callback){
-    //由于里面的任务会异步地执行，并不知道哪个任务先结束，有三种解决方式：
-    //1.回调函数；2.返回流；3.返回一个promise
-    gulp.watch('project/styles/**/*.less',['complieLess','concatCss']);
-    callback();
-});
+/**
+ * 编译less
+ */
 gulp.task('complieLess',function(callback){//编译所有的less
     var stream = gulp.src('project/styles/**/*.less')
         .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
@@ -62,8 +62,10 @@ gulp.task('complieLess',function(callback){//编译所有的less
 /* gulp.task('cleanCss', function(callback) {//删除文件夹里的内容
     del(['dist/styles/mainWindow.min.css'], callback);
 }); */
-//定义一个依赖，complieLess必须在concatCss执行前完成
-gulp.task('concatCss',['complieLess'],function(){//合并所有的css并压缩
+/**
+ * 合并所有的css并压缩
+ */
+gulp.task('concatCss',['complieLess'],function(){//定义一个依赖，complieLess必须在concatCss执行前完成
     // var stream = gulp.src('dist/css/**/*.css')
     //保证一个先后顺序
     var stream = gulp.src(['dist/styles/top.css','dist/styles/main.css'])    
@@ -73,7 +75,18 @@ gulp.task('concatCss',['complieLess'],function(){//合并所有的css并压缩
         .pipe(gulp.dest('dist/styles'));
     return stream;
 });
-//当自己的less文件发生改变时，自动编译并拼接然后压缩，且架设静态服务器同步浏览器刷新
+/**
+ * 监听less文件发生改变时，自动编译并拼接然后压缩
+ */
+gulp.task('watchLess',function(callback){
+    //由于里面的任务会异步地执行，并不知道哪个任务先结束，有三种解决方式：
+    //1.回调函数；2.返回流；3.返回一个promise
+    gulp.watch('project/styles/**/*.less',['complieLess','concatCss']);
+    callback();
+});
+/**
+ * 监听less文件发生改变时，自动编译并拼接然后压缩，且架设静态服务器同步浏览器刷新
+ */
 gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
     
 });
