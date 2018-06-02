@@ -49,6 +49,16 @@ gulp.task('minifyJsTest',function(){
         .pipe(gulp.dest('dist/scripts'));  //输出
 });
 /**
+ * 压缩html
+ */
+gulp.task('minifyHtml', function() {
+    return gulp.src('project/views/**/*.html')
+        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))    
+        .pipe(plugins.htmlmin({collapseWhitespace: true}))
+        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名        
+        .pipe(gulp.dest('dist/views'));
+});
+/**
  * 编译less
  */
 gulp.task('complieLess',function(callback){//编译所有的less
