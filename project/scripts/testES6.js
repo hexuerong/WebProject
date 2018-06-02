@@ -1,5 +1,10 @@
+/*
+ * @Author: hexuerong 
+ * @Date: 2018-06-02 19:46:48 
+ * @Last Modified by: hexuerong
+ * @Last Modified time: 2018-06-02 19:48:47
+ */
 $(function(){
-    console.log("tell me why");
     let mySymbol = Symbol();
     // 第一种写法
     let a = {};
@@ -14,5 +19,12 @@ $(function(){
     // 以上写法都得到同样结果
     console.log(a);
     console.log(a[mySymbol]); // "Hello!"
-    console.log("this is a test");
+    /**
+     * 
+     * @param {*} name 
+     * @param {*} age 
+     */
+    function test(name,age){
+
+    }
 });
