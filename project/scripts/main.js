@@ -1,62 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>主页面</title>
-    <link href="../../../../app/common/jquery-ui.min.css" rel="stylesheet">    
-    <!-- <link rel="stylesheet" href="/app/common/evol-colorpicker.css"> -->
-    <link href="../../../../app/common/evol-colorpicker.min.css" rel="stylesheet">
-    <!-- 引入自己的样式 -->
-    <link rel="stylesheet" href="../../../../dist/mainWindow.min.css">
-    <!-- <link rel="stylesheet" href="../../../../dist/css/top.css"> -->
-    <!-- <link rel="stylesheet" href="../../../../dist/css/main.css">     -->
-    <style>
-        html,body{
-            width: 100%;
-            height: 100%;
-        }
-        .outer{
-            position: relative;
-            width: 100px;
-            height: 30px;
-            box-sizing: border-box;
-            border: 1px solid blue;
-            color: #abd;
-            color: #FF0000;
-        }
-        .color{
-            position: absolute;
-            top:30px;
-            left:0px;
-            display: none;
-        }
-    </style> 
-</head>
-<body>
-    main page
-    <!-- <input style="width:100px;" id="mycolor" /> -->
-    <div class="content">
-        <div class="outer">
-            <!-- <div class="color" id="mycolor"></div>     -->
-        </div>
-        <input class="color" id="mycolor" />     
-    </div>       
-    <div style="width:100%;height:200px;background-color:aquamarine;">
-        <p>sadasfsafsaf</p>
-        <p>sadasfsafsaf</p>
-        <p>sadasfsafsaf</p>
-        <p>sadasfsafsaf</p>
-        <p>sadasfsafsaf</p>        
-    </div>
-</body>
-<!-- 架设在服务器上时才能使用这种绝对目录的方式，从根目录开始访问 -->
-<!-- <script type="text/javascript" src="/app/common/jquery-1.11.0.min.js"></script> -->
-<script type="text/javascript" src="../../../../app/common/jquery-1.11.0.min.js"></script>
-<script type="text/javascript" src="../../../../app/common/jquery-ui.min.js"></script>
-<script type="text/javascript" src="../../../../dist/js/evol-colorpicker.min.js"></script>
-<script>
 $(document).ready(function() {
     $("#mycolor").colorpicker({
         color: "#000000",
@@ -71,7 +12,7 @@ $(document).ready(function() {
             console.log("this is a test showPaletteCallback");
             $(".outer").addClass("active");
         },
-        fadeOut:false
+        fadeOut:true
     });
     $("#mycolor").on("change.color", function(event, color){
         $(".outer").css('background-color', color);
@@ -130,5 +71,3 @@ $(document).ready(function() {
     var _a = colorRGB2Hex(255,255,256);
     console.log(_a);
 }); 
-</script>
-</html>
