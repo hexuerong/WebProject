@@ -38,17 +38,6 @@ gulp.task('browser-sync', function () {
     });
 });
 /**
- * 压缩单个js
- */
-gulp.task('minifyJsTest',function(){
-    gulp.src('project/scripts/main.js')
-        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
-        // .pipe(gulp.dest('dist/scripts'))//输出到文件夹
-        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名
-        .pipe(plugins.uglify())    //压缩js
-        .pipe(gulp.dest('dist/scripts'));  //输出
-});
-/**
  * 压缩html
  */
 gulp.task('minifyHtml', function() {
@@ -101,12 +90,25 @@ gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
     
 });
 /**
+ * 压缩单个js
+ */
+gulp.task('minifyJsTest',function(){
+    gulp.src('project/scripts/main.js')
+        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
+        // .pipe(gulp.dest('dist/scripts'))//输出到文件夹
+        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名
+        .pipe(plugins.uglify())    //压缩js
+        .pipe(gulp.dest('dist/scripts'));  //输出
+});
+/**
  * es转换为es5
  */
 gulp.task('toes5',function(){
     var stream = gulp.src('project/scripts/**/*.js')
         .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))    
         .pipe(plugins.babel())
+        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名        
+        .pipe(plugins.uglify())    //压缩js
         .pipe(gulp.dest('dist/scripts'));
     return stream;
 });
