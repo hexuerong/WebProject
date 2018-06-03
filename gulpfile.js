@@ -105,10 +105,19 @@ gulp.task('minifyJsTest',function(){
  */
 gulp.task('toes5',function(){
     var stream = gulp.src('project/scripts/**/*.js')
+        .pipe(plugins.sourcemaps.init())
         .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))    
         .pipe(plugins.babel())
-        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名        
+        /* .pipe(plugins.babel({
+            presets: ['es2015'],
+            minified: true   // 是否压缩
+            // comments: false  // 是否保留注释
+        })) */
+        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名   
+        //需要sourcemaps的不能使用这个压缩，使用这个压缩会把sourcemaps加在文件最后一行的注释删除掉，导致sourcemaps不起作用     
         .pipe(plugins.uglify())    //压缩js
+        // addComment : true / false ; 是控制处理后的文件，尾部是否显示关于sourcemaps信息的注释。配上此参数，可以使用uglify压缩
+        .pipe(plugins.sourcemaps.write('',{addComment: true}))
         .pipe(gulp.dest('dist/scripts'));
     return stream;
 });

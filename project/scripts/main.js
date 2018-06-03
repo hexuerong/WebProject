@@ -1,3 +1,9 @@
+/*
+ * @Author: hexuerong 
+ * @Date: 2018-06-03 14:36:51 
+ * @Last Modified by: hexuerong
+ * @Last Modified time: 2018-06-03 15:09:23
+ */
 $(document).ready(function() {
     $("#mycolor").colorpicker({
         color: "#000000",

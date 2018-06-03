@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-02 19:46:48 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-02 19:48:47
+ * @Last Modified time: 2018-06-03 15:53:05
  */
 $(function(){
     let mySymbol = Symbol();
@@ -25,6 +25,7 @@ $(function(){
      * @param {*} age 
      */
     function test(name,age){
-
+      console.log(name,age);
     }
+    test("hexuerong","18");
 });
