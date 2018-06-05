@@ -93,7 +93,17 @@ gulp.task('minifyJS1', ['clean'], function() {//执行压缩前，先删除文�
     // gulp.start('minifyJsTest');
     // gulp.run('minifyJsTest');    
 });
-
+/**
+ * 压缩单个js
+ */
+gulp.task('minifyJsTest',function(){
+    gulp.src('project/scripts/main.js')
+        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
+        // .pipe(gulp.dest('dist/scripts'))//输出到文件夹
+        .pipe(plugins.rename({suffix: '.min'}))   //rename压缩后的文件名
+        .pipe(plugins.uglify())    //压缩js
+        .pipe(gulp.dest('dist/scripts'));  //输出
+});
 
 /**
  * 编译less
