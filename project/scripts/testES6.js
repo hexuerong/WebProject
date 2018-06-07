@@ -2,9 +2,13 @@
  * @Author: hexuerong 
  * @Date: 2018-06-02 19:46:48 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-04 14:35:04
+ * @Last Modified time: 2018-06-07 20:47:30
  */
-$(function(){
+// console.log(hexToRGB);
+//babel转es6会转成commonjs的规范，浏览器不支持commonjs，会报require is not defined，browserify和webpack都可以把require去掉，把所有的文件打包为一个文件
+import {hexToRGB,colorRGB2Hex} from './add';
+console.log(hexToRGB);
+// $(function(){
     let mySymbol = Symbol();
     // 第一种写法
     let a = {};
@@ -28,4 +32,4 @@ $(function(){
       console.log(name,age);
     }
     test("hexuerong","18");
-});
+// });

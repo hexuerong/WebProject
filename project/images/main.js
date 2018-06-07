@@ -2,9 +2,9 @@
  * @Author: hexuerong 
  * @Date: 2018-06-03 14:36:51 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-03 15:09:23
+ * @Last Modified time: 2018-06-07 20:49:50
  */
-$(document).ready(function() {
+// $(document).ready(function() {
     $("#mycolor").colorpicker({
         color: "#000000",
         showOn: "none",
@@ -44,36 +44,6 @@ $(document).ready(function() {
     console.log(a);
     var b = hexToRGB("abd");//相当于#112233
     console.log(b);
-    function hexToRGB(str){
-        var m = parseInt(str, 16) // 0x112233      0x123
-        if(str.length == 6){
-            // 分别获取R、G、B的值
-            var r = m >> 16 & 0xff // 17
-            var g = m >> 8 & 0xff // 34
-            var b = m & 0xff // 51
-            return {r:r,g:g,b:b};
-        }else if(str.length == 3){
-            var r = (m >> 8 & 0xf) | (m >> 4 & 0x0f0) // 17
-            var g = (m >> 4 & 0xf) | (m & 0xf0) // 34
-            var b = ((m & 0xf) << 4) | (m & 0xf) // 51
-            return {r:r,g:g,b:b};            
-        }else{
-            console.log("颜色不合法");
-            return null;
-        }
-    } 
-    function colorRGB2Hex(r,g,b) {
-        r = parseInt(r);
-        g = parseInt(g);
-        b = parseInt(b);       
-        if(r >= 0 && r <= 255 && g >= 0 && g <= 255 && b >= 0 && b <= 255) {
-            var hex = "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-            return hex;
-        }else{
-            console.log("rgb值不合法");
-            return null;
-        }
-    }
     var _a = colorRGB2Hex(255,255,256);
     console.log(_a);
-}); 
+// }); 

@@ -1,10 +1,12 @@
 var gulp = require("gulp");
 var browserSync = require("browser-sync").create();//调用 .create() 意味着你得到一个唯一的实例并允许您创建多个服务器或代理。
+var browserify = require("browserify");//解决es6转es5后报require is not defined的问题
+var glob = require("glob");//绑定任意多个文件
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
 var del = require('del');//删除文件
-//gulp-load-plugins插件能自动加载package.json文件里的 gulp 插件,
-//它并不会一开始就加载所有package.json里的gulp插件，而是在我们需要用到某个插件的时候，才去加载那个插件。 
+
 var plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
-// 要使用gulp-clone和gulp-clean-css这两个插件的时候，就可以使用plugins.clone和plugins.cleanCss来代替了,也就是原始插件名去掉gulp-前缀，之后再转换为驼峰命名。 
 
 const cssConfig = {
     src:[
@@ -103,3 +105,33 @@ gulp.task('toes5',function(){
 gulp.task('watchES6',function(){
     gulp.watch('project/scripts/**/*.js',['toes5']);
 });
+gulp.task('buildJS',function(cb){
+    glob('project/scripts/**/*.js', {}, function(err, files) {
+        var b = browserify();
+        files.forEach(function(file) {
+            console.log(file);
+            b.add(file);
+        });
+        b.bundle()
+            .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))                                
+            // .pipe(plugins.sourcemaps.init()) 
+            .pipe(source('output.js'))
+            .pipe(buffer())
+            .pipe(plugins.rename({
+                extname: '.bundle.js',
+                dirname: ''
+            }))
+            .pipe(plugins.uglify())
+            // .pipe(plugins.sourcemaps.write('',{addComment: true})) 
+            .pipe(gulp.dest('dist/scripts'));
+        cb();
+    });
+});
+gulp.task('browserify', function() {
+    return browserify('project/scripts/add.js')
+      .bundle()
+      .pipe(source('bundle.js')) // gives streaming vinyl file object
+      .pipe(buffer()) // <----- convert from streaming to buffered vinyl file object
+    //   .pipe(uglify()) // now gulp-uglify works 
+      .pipe(gulp.dest('dist/scripts'));
+  });
