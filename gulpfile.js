@@ -4,8 +4,8 @@ var browserify = require("browserify");//解决es6转es5后报require is not def
 var glob = require("glob");//绑定任意多个文件
 var source = require('vinyl-source-stream');
 var buffer = require('vinyl-buffer');
+var babelify = require('babelify');
 var del = require('del');//删除文件
-
 var plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
 
 const cssConfig = {
@@ -111,27 +111,46 @@ gulp.task('buildJS',function(cb){
         files.forEach(function(file) {
             console.log(file);
             b.add(file);
+            /* b.add({
+                entries: file,
+                debug: true
+            }) */
         });
+        b.transform(babelify)
         b.bundle()
-            .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))                                
-            // .pipe(plugins.sourcemaps.init()) 
             .pipe(source('output.js'))
             .pipe(buffer())
+            .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')})) 
+            .pipe(plugins.sourcemaps.init({loadMaps: true}))
             .pipe(plugins.rename({
-                extname: '.bundle.js',
+                extname: 'bundle.min.js',
                 dirname: ''
             }))
             .pipe(plugins.uglify())
-            // .pipe(plugins.sourcemaps.write('',{addComment: true})) 
+            .pipe(plugins.sourcemaps.write('',{addComment: true})) 
             .pipe(gulp.dest('dist/scripts'));
         cb();
     });
 });
 gulp.task('browserify', function() {
-    return browserify('project/scripts/add.js')
-      .bundle()
-      .pipe(source('bundle.js')) // gives streaming vinyl file object
-      .pipe(buffer()) // <----- convert from streaming to buffered vinyl file object
-    //   .pipe(uglify()) // now gulp-uglify works 
-      .pipe(gulp.dest('dist/scripts'));
-  });
+    return browserify({
+            entries: 'project/scripts/add.js',
+            debug: true//debug: true是告知Browserify在运行同时生成内联sourcemap用于调试。
+        })
+        .transform(babelify)//这句话很重要，有了这句话才不会报错：SyntaxError: 'import' and 'export' may appear only with 'sourceType: module'
+        // .on('error',gutil.log)
+        .bundle()
+        // .on('error',gutil.log)
+        .pipe(source('bundle.js'))// gives streaming vinyl file object
+
+        //vinyl-buffer用于将vinyl流转化为buffered vinyl文件（gulp-sourcemaps及大部分Gulp插件都需要这种格式）。
+        .pipe(buffer())//要使用下面的操作，得加上这句话// <----- convert from streaming to buffered vinyl file object
+        .pipe(plugins.sourcemaps.init({loadMaps: true}))//设置loadMaps: true是为了读取上一步得到的内联sourcemap，并将其转写为一个单独的sourcemap文件。
+        .pipe(plugins.rename({
+            extname: '.min.js',
+            dirname: ''
+        }))
+        .pipe(plugins.uglify())
+        .pipe(plugins.sourcemaps.write('',{addComment: true}))     
+        .pipe(gulp.dest('dist/scripts'));
+});
