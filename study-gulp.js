@@ -152,6 +152,28 @@ gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
     
 });
 
+gulp.task('browserify', function() {
+    return browserify({
+            entries: 'project/scripts/add.js',
+            debug: true//debug: true是告知Browserify在运行同时生成内联sourcemap用于调试。
+        })
+        .transform(babelify)//这句话很重要，有了这句话才不会报错：SyntaxError: 'import' and 'export' may appear only with 'sourceType: module'
+        // .on('error',gutil.log)
+        .bundle()
+        // .on('error',gutil.log)
+        .pipe(source('bundle.js'))// gives streaming vinyl file object
+
+        //vinyl-buffer用于将vinyl流转化为buffered vinyl文件（gulp-sourcemaps及大部分Gulp插件都需要这种格式）。
+        .pipe(buffer())//要使用下面的操作，得加上这句话// <----- convert from streaming to buffered vinyl file object
+        .pipe(plugins.sourcemaps.init({loadMaps: true}))//设置loadMaps: true是为了读取上一步得到的内联sourcemap，并将其转写为一个单独的sourcemap文件。
+        .pipe(plugins.rename({
+            extname: '.min.js',
+            dirname: ''
+        }))
+        .pipe(plugins.uglify())
+        .pipe(plugins.sourcemaps.write('',{addComment: true}))     
+        .pipe(gulp.dest('dist/scripts'));
+});
 
 /* // 编译 SASS & 自动注入到浏览器
 gulp.task('sass', function () {

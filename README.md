@@ -6,6 +6,7 @@ This is a study project of node,less,gulp and so on.
 2. 它并不会一开始就加载所有package.json里的gulp插件，而是在我们需要用到某个插件的时候，才去加载那个插件。  
 3. 要使用gulp-clone和gulp-clean-css这两个插件的时候，就可以使用plugins.clone和plugins.cleanCss来代替了,也就是原始插件名去掉gulp-前缀，之后再转换为驼峰命名。  
 ## gulp使用browserify
+babel转es6会转成commonjs的规范，浏览器不支持commonjs，会报require is not defined，browserify和webpack都可以把require去掉，把所有的文件打包为一个文件
 **要点：Stream 转换（把常规流转转成 vinyl 对象流）**  
   
 ***Babel*** - converts ES6 code to ES5 - however it doesn't handle imports.
@@ -76,4 +77,30 @@ gulp.task('browserify', function() {
         .pipe(gulp.dest('dist/scripts'));
 });
 ```
-## test
+## ES6
+### es6模块化——import与export
+1. es6模块化会自动把一个js文件当做一个模块，不需要再对某个js进行类似以下的封装了。(注：es6模块会自动使用严格模式，不管你是否定义)
+```
+;(function(){
+    //your code
+})();
+```
+改为：
+```
+    //your code
+```
+2. import存在变量提升，会把import提升到最顶上。
+```
+console.log(func);//此句不会报错
+import {func} from './main'
+console.log(func);
+```
+3. import从某个js导入变量或函数时，被导入的js是会执行的，也就是说在被导入的js内函数的外部打印某个字符串或者调用某个函数是会被执行的。(且每引用一次就会执行一次)
+### var、let和const
+- 用let取代var。因为两者语义相同，而且let不存在副作用：let不存在变量提升，let符合变量先声明后使用的原则。
+- 全局常量和线程安全。**let和const之间，优先使用const**。
+    - const会提醒阅读程序的人，这个值不应该被改变，也可以防止无意间修改变量值导致的错误。
+    - const比较符合函数式编程思想“运算不改变值，只新建值”。这样有利于将来的分布式运算。
+    - javascript编辑器会对const进行优化，多使用const有利于提高程序的运行效率。
+### 字符串编程风格优化
+静态字符串一律使用单引号或反引号。动态字符串使用反引号。

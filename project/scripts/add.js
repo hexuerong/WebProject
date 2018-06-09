@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-02 19:46:39 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-08 11:16:55
+ * @Last Modified time: 2018-06-09 21:17:37
  */
 function hexToRGB(str){
     var m = parseInt(str, 16) // 0x112233      0x123
@@ -22,7 +22,6 @@ function hexToRGB(str){
         return null;
     }
 } 
-console.log("yes");
 function colorRGB2Hex(r,g,b) {
     r = parseInt(r);
     g = parseInt(g);
@@ -35,5 +34,5 @@ function colorRGB2Hex(r,g,b) {
         return null;
     }
 }
-console.log("test");
+let myAge = 18;
 export {hexToRGB,colorRGB2Hex};
