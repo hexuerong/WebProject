@@ -63,7 +63,7 @@ gulp.task('concatComplieLess',function(){
         .pipe(plugins.concat('mainWindow.min.css'))
         .pipe(plugins.minifyCss())//兼容IE7及以下需设置compatibility属性
         .pipe(plugins.minifyCss({compatibility: 'ie7'}))
-        .pipe(plugins.sourcemaps.write('',{addComment:true}))
+        .pipe(plugins.sourcemaps.write('../maps/styles/',{addComment:true}))
         .pipe(gulp.dest('dist/styles'));
     return stream;
 });
@@ -123,7 +123,7 @@ gulp.task('buildJS',function(cb){
                     dirname: ''
                 }))
                 .pipe(plugins.uglify())
-                .pipe(plugins.sourcemaps.write('',{addComment: true})) 
+                .pipe(plugins.sourcemaps.write('../maps/scripts/',{addComment: true})) 
                 .pipe(gulp.dest('dist/scripts'));
         })
         cb();
