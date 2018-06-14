@@ -1,11 +1,11 @@
-var gulp = require("gulp");
-var browserSync = require("browser-sync").create();//调用 .create() 意味着你得到一个唯一的实例并允许您创建多个服务器或代理。
-var browserify = require("browserify");//解决es6转es5后报require is not defined的问题
-var glob = require("glob");//绑定任意多个文件
-var source = require('vinyl-source-stream');
-var buffer = require('vinyl-buffer');
-var babelify = require('babelify');
-var plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
+const gulp = require("gulp");
+const browserSync = require("browser-sync").create();//调用 .create() 意味着你得到一个唯一的实例并允许您创建多个服务器或代理。
+const browserify = require("browserify");//解决es6转es5后报require is not defined的问题
+const glob = require("glob");//绑定任意多个文件
+const source = require('vinyl-source-stream');
+const buffer = require('vinyl-buffer');
+const babelify = require('babelify');
+const plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
 
 const cssConfig = {
     src:[
@@ -106,5 +106,10 @@ gulp.task('buildJS',function(cb){
     });
 });
 gulp.task('watchJS',function(){
+    gulp.watch('project/scripts/**/*.js',['buildJS']);
+});
+//同时监听less和js
+gulp.task('watch',function(){
+    gulp.watch('project/styles/**/*.less',['concatComplieLess']);    
     gulp.watch('project/scripts/**/*.js',['buildJS']);
 });
