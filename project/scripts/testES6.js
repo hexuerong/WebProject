@@ -2,10 +2,11 @@
  * @Author: hexuerong 
  * @Date: 2018-06-02 19:46:48 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-09 21:11:46
+ * @Last Modified time: 2018-06-13 15:45:11
  */
 import {hexToRGB,colorRGB2Hex} from './add';
 console.log(hexToRGB('ffffff'));
+// import {hexToRGB,colorRGB2Hex} from './add';
 // console.log(myAge);
 let mySymbol = Symbol();
 // 第一种写法
@@ -29,4 +30,5 @@ console.log(a);
 function test(name,age){
   console.log(name,age);
 }
-test("hexuerong","18");
+// test("hexuerong","18");
+export {test};

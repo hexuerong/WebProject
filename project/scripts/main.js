@@ -2,9 +2,12 @@
  * @Author: hexuerong 
  * @Date: 2018-06-03 14:36:51 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-09 21:18:17
+ * @Last Modified time: 2018-06-13 15:16:45
  */
 import {hexToRGB,colorRGB2Hex} from './add'
+import {test as func} from './testES6'
+func("lili","10");
+
 $("#mycolor").colorpicker({
     color: "#000000",
     showOn: "none",
@@ -40,9 +43,9 @@ $(document).on("click",function(){
     // console.log(what);
     return false;       
 });
-var a = hexToRGB("213456");
+/* var a = hexToRGB("213456");
 console.log(a);
-var b = hexToRGB("abd");//相当于#112233
+var b = hexToRGB("123");//相当于#112233
 console.log(b);
 var _a = colorRGB2Hex(255,255,256);
-console.log(_a);
+console.log(_a); */
