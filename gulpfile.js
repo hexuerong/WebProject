@@ -10,7 +10,7 @@ const plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件�
 const develop_css = 'project/styles';//开发的css目录
 const dist_css = 'dist/styles';//输出的css目录
 
-const cssConfig = {
+const cssConfig = {//没有写在配置中的less会自动编译到dist下面的对应目录
     mainWindow:{
         src:[
             'project/styles/top.less',
@@ -74,6 +74,22 @@ gulp.task('concatComplieLess',function(){
         .pipe(gulp.dest('dist/styles'));
     return stream;
 });
+/**
+ * 判断是否需要编译和合并
+ * @param {string} name 被修改的文件的相对根目录的地址（即唯一的名字）
+ */
+const isComplie = function(name){
+    for(let p in cssConfig){
+        let pos = cssConfig[p].src.indexOf(name);
+        if(cssConfig[p].src && pos >= 0){
+            //需要编译
+            if(cssConfig[p].name && cssConfig[p].name != ''){
+                //需要合并
+            }
+        }
+    }
+}
+
 gulp.task('watchLess',function(callback){
     gulp.watch('project/styles/**/*.less',['concatComplieLess']);
     callback();
@@ -118,6 +134,7 @@ gulp.task('watch',function(){
         var name = event.path.replace(__dirname+'\\','').replace(/\\/g,'/');
         console.log('File '+event.path+' was '+event.type+',running tasks...');
         // runTask(name);
+        gulp.run("concatComplieLess");
     });    
     gulp.watch('project/scripts/**/*.js',['buildJS']);
 });
