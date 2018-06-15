@@ -7,11 +7,18 @@ const buffer = require('vinyl-buffer');
 const babelify = require('babelify');
 const plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
 
+const develop_css = 'project/styles';//开发的css目录
+const dist_css = 'dist/styles';//输出的css目录
+
 const cssConfig = {
-    src:[
-        'project/styles/top.less',
-        'project/styles/main.less',
-    ],
+    mainWindow:{
+        src:[
+            'project/styles/top.less',
+            'project/styles/main.less',
+        ],
+        dist:dist_css,
+        name:'mainWindow.css',//如果需要合并且重命名则有此参数，如果只是编译则不需要此参数
+    }
 };
 const jsConfig = {
 
@@ -56,7 +63,7 @@ gulp.task('minifyHtml', function() {
  */
 gulp.task('concatComplieLess',function(){
     // var stream = gulp.src('project/styles/**/*.less')
-    var stream = gulp.src(cssConfig.src)    
+    var stream = gulp.src(cssConfig.mainWindow.src)    
         .pipe(plugins.sourcemaps.init())        
         .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
         .pipe(plugins.less())
@@ -70,12 +77,6 @@ gulp.task('concatComplieLess',function(){
 gulp.task('watchLess',function(callback){
     gulp.watch('project/styles/**/*.less',['concatComplieLess']);
     callback();
-});
-/**
- * 监听less文件发生改变时，自动编译并拼接然后压缩，且架设静态服务器同步浏览器刷新
- */
-gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
-    
 });
 /**
  * 用babelify来转换es6使其适用于浏览器环境
@@ -110,6 +111,13 @@ gulp.task('watchJS',function(){
 });
 //同时监听less和js
 gulp.task('watch',function(){
-    gulp.watch('project/styles/**/*.less',['concatComplieLess']);    
+    // gulp.watch('project/styles/**/*.less',['concatComplieLess']);
+    gulp.watch('project/styles/**/*.less',function(event){
+        // console.log(__dirname);
+        // console.log(__filename);
+        var name = event.path.replace(__dirname+'\\','').replace(/\\/g,'/');
+        console.log('File '+event.path+' was '+event.type+',running tasks...');
+        // runTask(name);
+    });    
     gulp.watch('project/scripts/**/*.js',['buildJS']);
 });

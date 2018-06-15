@@ -203,6 +203,13 @@ gulp.task('watchES6',function(){
     gulp.watch('project/scripts/**/*.js',['toes5']);
 });
 
+/**
+ * 监听less文件发生改变时，自动编译并拼接然后压缩，且架设静态服务器同步浏览器刷新
+ */
+gulp.task('watchLess-sync',['watchLess','browser-sync-static'],function(){
+    
+});
+
 /* // 编译 SASS & 自动注入到浏览器
 gulp.task('sass', function () {
     return gulp.src('scss/styles.scss')
