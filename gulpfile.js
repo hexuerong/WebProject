@@ -10,7 +10,7 @@ const plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件�
 const develop_css = 'project/styles';//开发的css目录
 const dist_css = 'dist/styles';//输出的css目录
 
-const cssConfig = {//没有写在配置中的less会自动编译到dist下面的对应目录
+const lessConfig = {//没有写在配置中的less会自动编译到dist下面的对应目录
     mainWindow:{
         src:[
             'project/styles/top.less',
@@ -62,8 +62,7 @@ gulp.task('minifyHtml', function() {
  * 拼接并压缩编辑好的less，并生成sourcemap文件
  */
 gulp.task('concatComplieLess',function(){
-    // var stream = gulp.src('project/styles/**/*.less')
-    var stream = gulp.src(cssConfig.mainWindow.src)    
+    var stream = gulp.src('project/styles/**/*.less')
         .pipe(plugins.sourcemaps.init())        
         .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
         .pipe(plugins.less())
@@ -75,16 +74,46 @@ gulp.task('concatComplieLess',function(){
     return stream;
 });
 /**
- * 判断是否需要编译和合并
+ * 判断less是否需要编译和合并
  * @param {string} name 被修改的文件的相对根目录的地址（即唯一的名字）
  */
-const isComplie = function(name){
-    for(let p in cssConfig){
-        let pos = cssConfig[p].src.indexOf(name);
-        if(cssConfig[p].src && pos >= 0){
-            //需要编译
-            if(cssConfig[p].name && cssConfig[p].name != ''){
-                //需要合并
+const lessComplie = function(name){
+    for(let p in lessConfig){
+        let pos = lessConfig[p].src.indexOf(name);
+        if(lessConfig[p].src && pos >= 0){
+            let current_dist;
+            if(lessConfig[p].dist && lessConfig[p].dist != ''){
+                current_dist = lessConfig[p].dist;
+            }else{
+                current_dist = dist_css;
+            }
+            if(lessConfig[p].name && lessConfig[p].name != ''){//如果需要合并
+                gulp.src(lessConfig[p].src)
+                    .pipe(plugins.sourcemaps.init())
+                    .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
+                    .pipe(plugins.less())
+                    .pipe(plugins.concat(lessConfig[p].name))
+                    .pipe(plugins.minifyCss())//兼容IE7及以下需设置compatibility属性
+                    .pipe(plugins.minifyCss({compatibility: 'ie7'}))
+                    .pipe(plugins.rename(function(path){
+                        path.basename += '.min';
+                        console.log(path.basename);
+                    }))
+                    .pipe(plugins.sourcemaps.write('../maps/styles/',{addComment:true}))
+                    .pipe(gulp.dest(current_dist));
+            }else{
+                gulp.src(lessConfig[p].src)
+                    .pipe(plugins.sourcemaps.init())
+                    .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')}))
+                    .pipe(plugins.less())
+                    .pipe(plugins.minifyCss())//兼容IE7及以下需设置compatibility属性
+                    .pipe(plugins.minifyCss({compatibility: 'ie7'}))
+                    .pipe(plugins.rename(function(path){
+                        path.basename += '.min';
+                        console.log(path.basename);
+                    }))
+                    .pipe(plugins.sourcemaps.write('../maps/styles/',{addComment:true}))
+                    .pipe(gulp.dest(current_dist));
             }
         }
     }
@@ -133,8 +162,7 @@ gulp.task('watch',function(){
         // console.log(__filename);
         var name = event.path.replace(__dirname+'\\','').replace(/\\/g,'/');
         console.log('File '+event.path+' was '+event.type+',running tasks...');
-        // runTask(name);
-        gulp.run("concatComplieLess");
+        lessComplie(name);
     });    
     gulp.watch('project/scripts/**/*.js',['buildJS']);
 });

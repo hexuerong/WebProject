@@ -1,12 +1,12 @@
+@import './variables.less';
 html,body{
     background-color: rgb(200, 200, 200);
-    color: #000000;
     box-sizing: border-box;
     padding: 10px;
 }
 .outer{
     position: relative;
-    width: 120px;
+    width: 150px;
     height: 30px;
     box-sizing: border-box;
     border: 1px solid rgb(91, 91, 146);
@@ -17,4 +17,6 @@ html,body{
     left:0px;
     display: none;
 }
-
+p{
+    color: @body-color-red;
+}
