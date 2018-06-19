@@ -7,8 +7,10 @@ const buffer = require('vinyl-buffer');
 const babelify = require('babelify');
 const plugins = require('gulp-load-plugins')();//加载gulp-load-plugins插件，并马上运行它
 
-const develop_css = 'project/styles';//开发的css目录
-const dist_css = 'dist/styles';//输出的css目录
+const develop_css = 'project/styles/';//开发的css目录
+const dist_css = 'dist/styles/';//输出的css目录
+const develop_js = 'project/scripts/';//开发的js目录
+const dist_js = 'dist/scripts/';//输出的js目录
 
 const lessConfig = {//没有写在配置中的less会自动编译到dist下面的对应目录
     mainWindow:{
@@ -21,7 +23,21 @@ const lessConfig = {//没有写在配置中的less会自动编译到dist下面�
     }
 };
 const jsConfig = {
-
+    mainWindow:{
+        src:[
+            'project/scripts/testES6.js',
+            'project/scripts/main.js',
+        ],
+        dist:dist_js,
+    },
+    /* test:{
+        src:[
+            'project/scripts/add.js',
+            'project/scripts/main.js',
+        ],
+        dist:dist_js,
+        name:'testConcat.js'
+    }, */
 }
 /**
  * 设置任务---架设静态服务器
@@ -151,18 +167,82 @@ gulp.task('buildJS',function(cb){
         cb();
     });
 });
+/**
+ * 是否编译及是否合并js
+ * @param {string} name 唯一文件名
+ */
+const jsComplie = function(name){
+    for(let p in jsConfig){
+        let pos = jsConfig[p].src.indexOf(name);
+        if(jsConfig[p].src && pos >= 0){
+            let current_dist;
+            if(jsConfig[p].dist && jsConfig[p].dist != ''){
+                current_dist = jsConfig[p].dist;
+            }else{
+                current_dist = dist_js;
+            }
+            if(jsConfig[p].name && jsConfig[p].name != ''){//如果需要合并
+                jsConfig[p].src.map(function(entry){
+                    browserify({
+                            entries:[entry],
+                            debug:true
+                        })
+                        .transform(babelify)
+                        .bundle()
+                        .pipe(source(entry))
+                        .pipe(buffer())
+                        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')})) 
+                        .pipe(plugins.sourcemaps.init({loadMaps: true}))
+                        .pipe(plugins.concat(jsConfig[p].name))
+                        .pipe(plugins.rename({
+                            extname: '.bundle.min.js',
+                            dirname: ''
+                        }))
+                        .pipe(plugins.uglify())
+                        .pipe(plugins.sourcemaps.write('../maps/scripts/',{addComment: true})) 
+                        .pipe(gulp.dest(current_dist));
+                });
+            }else{
+                jsConfig[p].src.map(function(entry){
+                    browserify({
+                            entries:[entry],
+                            debug:true
+                        })
+                        .transform(babelify)
+                        .bundle()
+                        .pipe(source(entry))
+                        .pipe(buffer())
+                        .pipe(plugins.plumber({errorHandler:plugins.notify.onError('Error:<%=error.message%>')})) 
+                        .pipe(plugins.sourcemaps.init({loadMaps: true}))
+                        .pipe(plugins.rename({
+                            extname: '.bundle.min.js',
+                            dirname: ''
+                        }))
+                        .pipe(plugins.uglify())
+                        .pipe(plugins.sourcemaps.write('../maps/scripts/',{addComment: true})) 
+                        .pipe(gulp.dest(current_dist));
+                });
+            }
+        }
+    }
+}
 gulp.task('watchJS',function(){
     gulp.watch('project/scripts/**/*.js',['buildJS']);
 });
 //同时监听less和js
 gulp.task('watch',function(){
     // gulp.watch('project/styles/**/*.less',['concatComplieLess']);
-    gulp.watch('project/styles/**/*.less',function(event){
+    gulp.watch(develop_css+'**/*.less',function(event){
         // console.log(__dirname);
         // console.log(__filename);
         var name = event.path.replace(__dirname+'\\','').replace(/\\/g,'/');
         console.log('File '+event.path+' was '+event.type+',running tasks...');
         lessComplie(name);
     });    
-    gulp.watch('project/scripts/**/*.js',['buildJS']);
+    // gulp.watch('project/scripts/**/*.js',['buildJS']);
+    gulp.watch(develop_js+'**/*.js',function(event){
+        var name = event.path.replace(__dirname+'\\','').replace(/\\/g,'/');
+        console.log('File '+event.path+' was '+event.type+',running tasks...');
+        jsComplie(name);
+    });  
 });
