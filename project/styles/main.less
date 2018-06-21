@@ -1,4 +1,11 @@
+/*
+ * @Author: hexuerong 
+ * @Date: 2018-06-21 17:10:42 
+ * @Last Modified by: hexuerong
+ * @Last Modified time: 2018-06-21 17:16:09
+ */
 @import './variables.less';
+@import './normalize.less';
 html,body{
     background-color: rgb(200, 200, 200);
     box-sizing: border-box;
@@ -17,6 +24,12 @@ html,body{
     left:0px;
     display: none;
 }
-p{
-    color: @body-color-red;
+.text{
+    width:100%;
+    height:200px;
+    background-color:aquamarine;
+    p{
+        color: @body-color-red;
+        font-weight: 600;
+    }
 }

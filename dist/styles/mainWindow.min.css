@@ -1,2 +1,2 @@
-.outer,body,html{position:relative;box-sizing:border-box}body,html{margin:0;width:100%;height:100%;background-color:#c8c8c8;padding:10px}.outer{width:150px;height:30px;border:1px solid #5b5b92}.color{position:absolute;top:30px;left:0;display:none}p{color:red}
+@charset "utf-8";.outer,body,html{position:relative;box-sizing:border-box}body,html{width:100%;height:100%;font-size:15px;margin:0;background-color:#c8c8c8;padding:10px}div,p{padding:0;margin:0}.outer{width:150px;height:30px;border:1px solid #5b5b92}.color{position:absolute;top:30px;left:0;display:none}.text{width:100%;height:200px;background-color:#7fffd4}.text p{color:red;font-weight:600}
 /*# sourceMappingURL=../maps/styles/mainWindow.min.css.map */
