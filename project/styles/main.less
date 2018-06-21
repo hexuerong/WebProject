@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-21 17:10:42 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-21 17:16:09
+ * @Last Modified time: 2018-06-21 18:26:32
  */
 @import './variables.less';
 @import './normalize.less';
@@ -30,6 +30,17 @@ html,body{
     background-color:aquamarine;
     p{
         color: @body-color-red;
-        font-weight: 600;
+        &:nth-child(1){
+            font-weight: lighter;
+        }
+        &:nth-child(2){
+            font-weight: normal;
+        }
+        &:nth-child(3){
+            font-weight: bold;
+        }
+        &:nth-child(4){
+            font-weight: bolder;
+        }
     }
 }
