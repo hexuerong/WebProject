@@ -2,62 +2,78 @@
  * @Author: hexuerong 
  * @Date: 2018-06-22 23:36:53 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-23 00:36:41
+ * @Last Modified time: 2018-06-23 20:08:16
  */
-;(function($){
-    "use strict" //使用js严格模式检查，使语法更规范
+;(function($, undefined){//undefined在老一辈的浏览器是不被支持的，直接使用会报错，js框架要考虑到兼容性，因此增加一个形参undefined
+    'use strict' //使用js严格模式检查，使语法更规范
+    var pluginName = 'domResize';
     // 默认参数
     var _options  = {
 
     };
-    // 在用户调用插件时将API暴露给用户
-    var api = {
-        config: function (ops) {
-            //没有参数传入，直接返回默认参数
-            if(!opts) return options;
-            //有参数传入，通过key将options的值更新为用户的值
-            for(var key in opts) {
-                options[key] = opts[key];
-            }
-            return this;//返回this实现插件的链式调用
-        },
-        listen: function listen(elem) {
-            //这里通过typeof设置监听的元素需为字符串调用，实际可根据需要进行更改
-            if (typeof elem === 'string') {
-                //这里使用ES5的querySelectorAll方法获取dom元素
-                var elems = document.querySelectorAll(elem),
-                    i = elems.length;
-                    //通过递归将listen方法应用在所有的dom元素上
-                    while (i--) {
-                        listen(elems[i]);
-                    }
-                    return
-            }
-            //在这里，你可以将插件的部分功能函数写在这里
+    function Resize(element,options){
+        console.log('new a Resize');
+        return {
+            add:$.proxy(this.add,this),
+            sub:$.proxy(this.sub,this),   
+            mul:$.proxy(this.mul,this),                                 
+        }
+    }
+    Resize.prototype.listen = function listen(elem) {
+        //这里通过typeof设置监听的元素需为字符串调用，实际可根据需要进行更改
+        if (typeof elem === 'string') {
+            //这里使用ES5的querySelectorAll方法获取dom元素
+            var elems = document.querySelectorAll(elem),
+                i = elems.length;
+                //通过递归将listen方法应用在所有的dom元素上
+                while (i--) {
+                    listen(elems[i]);
+                }
+                return
+        }
+        //在这里，你可以将插件的部分功能函数写在这里
 
-            
-            return this;//返回this实现插件的链式调用
-        },
-        add: function(n1,n2){ return n1 + n2; },//加
-        sub: function(n1,n2){ return n1 - n2; },//减
-        mul: function(n1,n2){ return n1 * n2; },//乘
-        div: function(n1,n2){ return n1 / n2; },//除
-        sur: function(n1,n2){ return n1 % n2; } //余
+        
+        return this;//返回this实现插件的链式调用
     };
-    $.fn.pluginResize = function(){  
-        var method = arguments[0];  
-        if(methods[method]) {  
-            method = methods[method];  
-            //将含有length属性的数组获取从第下标为1的之后的数组元素，并返回数组  
-            arguments = Array.prototype.slice.call(arguments,1);  
-        }else if( typeof(method) == 'object' || !method ){  
-            method = methods.init;  
-        }else{  
-            $.error( 'Method ' +  method + ' does not exist on jQuery.pluginName' );  
-            return this;  
-        }  
-        //jquery的实例对象将拥有执行method的能力，method的this是指jquery的实例对象  
-        return method.apply(this,arguments);  
+    Resize.prototype.add = function(n1,n2){//加
+        console.log(n1 + n2);
+        return this; 
+    };
+    Resize.prototype.sub = function(n1,n2){ 
+        console.log( n1 - n2);
+        return this; 
+    };//减
+    Resize.prototype.mul =  function(n1,n2){ 
+        console.log( n1 * n2); 
+        return this;
+    };//乘
+    Resize.prototype.div = function(n1,n2){ return n1 / n2; };//除
+    Resize.prototype.sur = function(n1,n2){ return n1 % n2; }; //余
+
+    $.fn[pluginName] = function(options,args){  
+        this.each(function(){//需要对符合的每个dom元素绑定事件
+            var _this = $.data(this,pluginName);
+            if(typeof options === 'string'){//如果传入的是字符串
+                if(!_this){//未被初始化
+                    $.error('Not initialized,can not call method : '+options);  
+                }else if(!$.isFunction(_this[options]) || options.charAt(0) === '_'){//如果插件api中不包括此函数，或者访问的是以下划线开头的私有函数
+                    $.error('No such method : '+options);  
+                }else{
+                    if(!(args instanceof Array)){//如果args参数不是数组，将其变成数组。调用函数需要传入的参数
+                        args = [args];
+                    }
+                    _this[options].apply(_this,args);//改变调用的函数中的this的执向
+                }
+            }else if(typeof options === 'boolean'){//如果传入的是bool值
+                return _this;
+            }else if(typeof options === 'object'){
+                $.data(this,pluginName, new Resize(this,$.extend(true,{},options)));
+            }else{
+                $.error('The parameter '+options+' that can not be identified');//不能识别的参数  
+            }
+        });
+        return this;//返回this实现插件的链式调用
     } 
     
     /* var _global;
@@ -79,7 +95,7 @@
     } */
 }(jQuery));
 
-var dragMinWidth=300;
+/* var dragMinWidth=300;
 var dragMinHeight=300;
 var oDrag=document.querySelector('.drag');
 var oTitle=document.querySelector('.drag .title');
@@ -204,4 +220,4 @@ function resize(oparent,handle,isleft,istop,lookx,looky){
     resize(oDrag,resizeLT,true,true,true,true);
     resize(oDrag,resizeLB,true,false,true,true);
 
-})();
+})(); */

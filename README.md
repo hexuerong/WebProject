@@ -167,3 +167,73 @@ console.log(func);
 
 多个关键字 @import 是允许的，你必须使用逗号分隔关键字：
 example: `@import (optional, reference) "foo.less";`
+## JS和jquery中部分老是记不住的知识
+### $.extend 拷贝
+注意：
+1. 如果只为$.extend()指定了一个参数，则意味着参数target被省略。此时，target就是jQuery对象本身。通过这种方式，我们可以为全局对象jQuery添加新的函数。
+2. 如果多个对象具有相同的属性，则后者会覆盖前者的属性值。   
+
+jQuery.extend() 函数用于将一个或多个对象的内容合并到目标对象。
+语法一：（方括号中的为可选参数）
+```
+$.extend( target [, object1 ] [, objectN ] )
+```
+语法二：（指示是否深度合并）
+```
+$.extend( [deep ], target, object1 [, objectN ] )
+```
+- deep	可选。 Boolean类型 指示是否深度合并对象，默认为false。如果该值为true，且多个对象的某个同名-属性也都是对象，则该"属性对象"的属性也将进行合并。
+- target	Object类型 目标对象，其他对象的成员属性将被附加到该对象上。
+- object1	可选。 Object类型 第一个被合并的对象。
+- objectN	可选。 Object类型 第N个被合并的对象。
+
+常用于：**合并 defaults 和 options 对象，并且不修改 defaults 对象。这是常用的插件开发模式。** ***[js插件开发参考](https://www.jianshu.com/p/e65c246beac1)***
+```
+var result = $.extend(true,{},options)  //语义：将options深拷贝到‘{}’空对象中,并将结果赋值给result
+```
+### $.proxy 修改this指向
+该方法通常用于向上下文指向不同对象的元素添加事件。
+```
+jQuery.proxy( function, context )
+/**function将要改变上下文语境的函数。
+** context函数的上下文语境(`this`)会被设置成这个 object 对象。
+**/
+$('#myElement').click(function() {
+    setTimeout($.proxy(function() {
+        $(this).addClass('aNewClass');  
+    }, this), 1000);
+});
+
+jQuery.proxy( context, name )
+/**context函数的上下文语境会被设置成这个 object 对象。
+**name将要改变上下文语境的函数名(这个函数必须是前一个参数 ‘context’ **对象的属性)
+**/
+var objPerson = {
+    name: "John Doe",
+    age: 32,
+    test: function(){
+      $("p").after("Name: " + this.name + "<br> Age: " + this.age);
+    }
+};
+$("button").click($.proxy(objPerson,"test"));
+```
+### call与apply方法（修改this指向）
+```
+function add(c,d){
+    return this.a + this.b + c + d;
+}
+
+var s = {a:1, b:2};
+console.log(add.call(s,3,4)); // 1+2+3+4 = 10
+console.log(add.apply(s,[5,6])); // 1+2+5+6 = 14 
+```
+### 函数参数：（arguments对象）
+arguments就是一个对象--函数的一个内部对象，和this一样。
+参数分为两种：
+- 形参（parameter）：函数定义时圆括号里的数据。
+- 实参（arguments）：函数调用时，传给函数作为参数的数据。
+
+**arguments是一个类数组对象，包含着传入函数中的所有参数。**
+- 该对象有一个属性callee,该属性是一个指针，指向拥有这个arguments对象的函数。
+- arguments对象也拥有caller属性，即：arguments.caller。但在严格模式下访问它会报错，而在非严格模式下这个属性始终是undefined。该属性主要就是为了分清arguments.caller和函数的caller属性。函数的caller属性指向调用该函数的外部函数。**arguments.callee.caller 和函数的caller属性等效。**
+- arguments还有一个length属性，返回传入参数的个数。

@@ -154,7 +154,17 @@
             <div class="content">拖动、最大化、最小化、关闭等效果</div> 
         </div>
     </body>
+    <script src="../../components/lib/js/jquery-1.11.0.min.js"></script>
+    <script src="../scripts//pluginResize.js"></script>
     <script type="text/javascript">
+        ;(function($){
+            $(".title").css("background-color","red").css("height","50px");
+            $('.drag').domResize({
+                dragable:true
+            });
+            $('.drag').domResize('add',[1,2]).domResize('sub',[1,2]).domResize('mul',[1,2]);            
+        }(jQuery));
+
         var min=document.querySelector('.min');
         var max=document.querySelector('.max');
         var revert=document.querySelector('.revert');
