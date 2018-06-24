@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-22 23:36:53 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-24 16:45:17
+ * @Last Modified time: 2018-06-24 22:15:17
  */
 ;(function($, undefined){//undefined在老一辈的浏览器是不被支持的，直接使用会报错，js框架要考虑到兼容性，因此增加一个形参undefined
     'use strict' //使用js严格模式检查，使语法更规范
@@ -12,6 +12,14 @@
         dragable:true,//允许拖动修改位置
         dragHandle:null,
         selectColor:'#0000ff',//选中元素时的边框颜色
+        position:"relative",//位置坐标。"absolute"(绝对位置),"relative"(相对父元素)
+        pointLimit:{
+            minTop:0,
+            minLeft:0,
+            maxTop:$(document).outerHeight(),
+            maxLeft:$(document).outerWidth()
+        },
+
     };
     function Resize(element,options){
         this.element = element;
@@ -131,7 +139,7 @@
         $(document).off("click.resize");
     };
     Resize.prototype.onDrag = function(){//拖动修改位置
-        var disX=0,disY=0;
+        var disX,disY;
         
         var oDrag = this.element;//要改变哪个元素的位置
         var handle;//点击在哪个上面进行拖动
@@ -141,11 +149,9 @@
             handle = this.element;
         $(handle).css('cursor','move');
         $(handle).on("mousedown.drag",function(e){
-            e=e||event;
-            e.preventDefault();
             disX=e.clientX-oDrag.offsetLeft;
             disY=e.clientY-oDrag.offsetTop;
-            document.onmousemove=function(e){
+            $(document).on("mousemove.drag",function(e){
                 e=e||event;
                 var Left=e.clientX-disX;
                 var Top=e.clientY-disY;
@@ -163,11 +169,12 @@
                 };
                 oDrag.style.left=Left+'px';
                 oDrag.style.top=Top+'px';
-            };
-            document.onmouseup=function(){
-                document.onmousemove=null;
-                document.onmouseup=null;
-            };
+                return false;
+            }).on("mouseup.drag",function(){
+                $(document).off("mousemove.drag");
+                $(document).off("mouseup.drag");
+                return false;
+            });
             return false;
         });
     };
