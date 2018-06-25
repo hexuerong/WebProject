@@ -14,6 +14,7 @@
                 position: relative;
                 width: 100%;
                 height: 100%;
+                overflow: hidden;
             }
             .drag{
                 width: 300px;
@@ -70,24 +71,18 @@
         </style>
     </head>
     <body>
-        <div class="drag">
-            <div class="title">
-                <div class="tip">
-                    <a class="min" href="javascript:;" title="最小化">-</a>
-                    <a class="max" href="javascript:;" title="最大化">口</a>
-                    <a class="revert" href="javascript:;" title="还原">回</a>
-                    <a class="close" href="javascript:;" title="关闭">X</a>
+        <div class="limit" style="position: relative;top:5%;left:5%;width: 800px;height: 700px;border: 1px solid sandybrown;">
+            <div class="drag">
+                <div class="title">
+                    <div class="tip">
+                        <a class="min" href="javascript:;" title="最小化">-</a>
+                        <a class="max" href="javascript:;" title="最大化">口</a>
+                        <a class="revert" href="javascript:;" title="还原">回</a>
+                        <a class="close" href="javascript:;" title="关闭">X</a>
+                    </div>
                 </div>
+                <div class="content">拖动、最大化、最小化、关闭等效果</div> 
             </div>
-<!--             <div class="resizeL"></div>
-            <div class="resizeT"></div>
-            <div class="resizeR"></div>
-            <div class="resizeB"></div>
-            <div class="resizeLT"></div>
-            <div class="resizeRT"></div>
-            <div class="resizeRB"></div>
-            <div class="resizeLB"></div> -->
-            <div class="content">拖动、最大化、最小化、关闭等效果</div> 
         </div>
     </body>
     <script src="../../components/lib/js/jquery-1.11.0.min.js"></script>
@@ -98,6 +93,24 @@
                 selectColor:"darkblue",
                 // dragable:false,
                 // dragHandle:'.drag .title',
+                // outline:false,
+                // outlineType:'solid',
+
+                // resizeable:false,
+                // resizeMinWidth:10,
+                // resizeMinHeight:10,
+                pointLimit:{
+                    minTop:0,
+                    minLeft:50,
+                    maxTop:$(".limit").innerHeight(),
+                    maxLeft:$(".limit").innerWidth()-50
+                },
+                dragCallback:function(){
+                    console.log("drag");
+                },
+                resizeCallback:function(){
+                    console.log("resize");
+                }
             });
             // var result = $('.drag').domResize('add',[1,2]);
             // var k = $('.drag').domResize('add',[1,2]).domResize('sub',[1,2]).domResize('mul',[1,2]); 

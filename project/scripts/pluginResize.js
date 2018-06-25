@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-22 23:36:53 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-24 22:15:17
+ * @Last Modified time: 2018-06-25 14:42:25
  */
 ;(function($, undefined){//undefined在老一辈的浏览器是不被支持的，直接使用会报错，js框架要考虑到兼容性，因此增加一个形参undefined
     'use strict' //使用js严格模式检查，使语法更规范
@@ -11,15 +11,20 @@
     var _options  = {
         dragable:true,//允许拖动修改位置
         dragHandle:null,
+        resizeable:true,//是否允许修改大小
+        resizeMinWidth:0,//修改大小当前的最小宽度
+        resizeMinHeight:0,//修改大小当前的最小高度
         selectColor:'#0000ff',//选中元素时的边框颜色
-        position:"relative",//位置坐标。"absolute"(绝对位置),"relative"(相对父元素)
-        pointLimit:{
+        outline:true,//选中时是否需要outline
+        outlineType:'dashed',//outline的类型，与css的线的类型相对应
+        pointLimit:{//范围的限制
             minTop:0,
             minLeft:0,
             maxTop:$(document).outerHeight(),
             maxLeft:$(document).outerWidth()
         },
-
+        dragCallback:null,
+        resizeCallback:null,
     };
     function Resize(element,options){
         this.element = element;
@@ -106,23 +111,13 @@
         $(this.element).off("click.resize").on("click.resize",function(){
             if($(_this.element).find(".resize-tool").css("display") == "none"){
                 _this.setResizeToolPosition();  
-                $(this).css("outline","1px dashed "+_this.options.selectColor);          
+                if(_this.options.outline)
+                    $(this).css("outline","1px "+_this.options.outlineType+" "+_this.options.selectColor);          
                 $(this).find(".resize-tool").show();
                 if(_this.options.dragable)
                     _this.onDrag();
-                
-                //四边变大
-                /* _this.setResize(_this.element.querySelector('.resizeBC'),false,false,false,true);
-                _this.setResize(_this.element.querySelector('.resizeRC'),false,false,true,false);
-                _this.setResize(_this.element.querySelector('.resizeTC'),false,true,false,true);
-                _this.setResize(_this.element.querySelector('.resizeLC'),true,false,true,false);
-
-                //四角变大
-                _this.setResize(_this.element.querySelector('.resizeBR'),false,false,true,true);
-                _this.setResize(_this.element.querySelector('.resizeTR'),false,true,true,true);
-                _this.setResize(_this.element.querySelector('.resizeTL'),true,true,true,true);
-                _this.setResize(_this.element.querySelector('.resizeBL'),true,false,true,true); */
-                
+                if(_this.options.resizeable)
+                    _this.onResize();
                 $(document).on("click.resize",function(){
                     _this.cancelResize();
                     return false;
@@ -135,11 +130,14 @@
         $(this.element).find(".resize-tool").hide();
         $(this.element).css("outline","none");  
         if(this.options.dragable)
-            this.offDrag();        
+            this.offDrag();  
+        if(this.options.resizeable)
+            this.offResize();      
         $(document).off("click.resize");
     };
     Resize.prototype.onDrag = function(){//拖动修改位置
         var disX,disY;
+        var _this = this;
         
         var oDrag = this.element;//要改变哪个元素的位置
         var handle;//点击在哪个上面进行拖动
@@ -149,32 +147,38 @@
             handle = this.element;
         $(handle).css('cursor','move');
         $(handle).on("mousedown.drag",function(e){
-            disX=e.clientX-oDrag.offsetLeft;
-            disY=e.clientY-oDrag.offsetTop;
+            disX = e.clientX - oDrag.offsetLeft;
+            disY = e.clientY - oDrag.offsetTop;
             $(document).on("mousemove.drag",function(e){
-                e=e||event;
-                var Left=e.clientX-disX;
-                var Top=e.clientY-disY;
-                var maxleft=document.documentElement.offsetWidth-oDrag.offsetWidth;
-                var maxtop=document.documentElement.clientHeight-oDrag.offsetHeight;
-                if (Left<0) {
-                    Left=0;
-                }else if (Left>maxleft) {
-                    Left=maxleft;
+                var Left = e.clientX - disX;
+                var Top = e.clientY - disY;
+                var maxleft = _this.options.pointLimit.maxLeft - oDrag.offsetWidth;
+                var maxtop = _this.options.pointLimit.maxTop - oDrag.offsetHeight;
+                if (Left < _this.options.pointLimit.minLeft) {
+                    Left = _this.options.pointLimit.minLeft;
+                }else if (Left > maxleft) {
+                    Left = maxleft;
                 };
-                if (Top<0) {
-                    Top=0;
-                }else if (Top>maxtop) {
-                    Top=maxtop;
+                if (Top < _this.options.pointLimit.minTop) {
+                    Top = _this.options.pointLimit.minTop;
+                }else if (Top > maxtop) {
+                    Top = maxtop;
                 };
                 oDrag.style.left=Left+'px';
                 oDrag.style.top=Top+'px';
+
+                if(_this.options.dragCallback)//如果有拖动的回调函数
+                    _this.options.dragCallback();
+
                 return false;
             }).on("mouseup.drag",function(){
                 $(document).off("mousemove.drag");
                 $(document).off("mouseup.drag");
                 return false;
             });
+            return false;
+        });
+        $(this.element).find(".resize-tool").off("mousedown.drag").on("mousedown.drag",function(){//阻止拖动事件向下传递
             return false;
         });
     };
@@ -185,69 +189,102 @@
         else
             handle = this.element;
         $(handle).css('cursor','default');
-        $(handle).off("mousedown.drag");      
+        $(handle).off("mousedown.drag");  
+        $(this.element).find(".resize-tool").off("mousedown.drag"); 
+    };
+    Resize.prototype.onResize = function(){
+        //四边变大
+        this.setResize(this.element.querySelector('.resizeBC'),false,false,false,true);
+        this.setResize(this.element.querySelector('.resizeRC'),false,false,true,false);
+        this.setResize(this.element.querySelector('.resizeTC'),false,true,false,true);
+        this.setResize(this.element.querySelector('.resizeLC'),true,false,true,false);
+
+        //四角变大
+        this.setResize(this.element.querySelector('.resizeBR'),false,false,true,true);
+        this.setResize(this.element.querySelector('.resizeTR'),false,true,true,true);
+        this.setResize(this.element.querySelector('.resizeTL'),true,true,true,true);
+        this.setResize(this.element.querySelector('.resizeBL'),true,false,true,true);
+    };
+    Resize.prototype.offResize = function(){
+        $(this.element).find(".resize-tool").off("mousedown.resize");
     };
     Resize.prototype.setResize = function(handle,isleft,istop,lookx,looky){
         var _this = this;
-        var dragMinWidth=10;
-        var dragMinHeight=10;
-
         var oparent = this.element;
-        var disX=0,disY=0;
-        handle=handle||oDrag;
-    
-        handle.onmousedown=function(e){
-            e=e||event;
-            e.preventDefault();
+        var disX,disY;
+        $(handle).on("mousedown.resize",function(e){
             disX=e.clientX-this.offsetLeft;
             disY=e.clientY-this.offsetTop;
             var iparenttop=oparent.offsetTop;
             var iparentleft=oparent.offsetLeft;
             var iparentwidth=oparent.offsetWidth;
             var iparentheight=oparent.offsetHeight;
-    
-            document.onmousemove=function(e){
-                e=e||event;
+            $(document).on("mousemove.resize",function(e){
                 var iL=e.clientX-disX;
                 var iT=e.clientY-disY;
-                var maxw=document.documentElement.clientWidth-oparent.offsetLeft-2;
-                var maxh=document.documentElement.clientHeight-oparent.offsetTop-2;
-                var iw= isleft?iparentwidth-iL:handle.offsetWidth+iL;
+                // var maxw=document.documentElement.clientWidth-oparent.offsetLeft-2;
+                // var maxh=document.documentElement.clientHeight-oparent.offsetTop-2;
+                var maxw,maxh;
+                if(isleft){
+                    maxw = (iparentleft - _this.options.pointLimit.minLeft) + iparentwidth;
+                }else{
+                    maxw = _this.options.pointLimit.maxLeft - oparent.offsetLeft;
+                }
+                if(istop){
+                    maxh = (iparenttop - _this.options.pointLimit.minTop) + iparentheight;
+                }else{
+                    maxh = _this.options.pointLimit.maxTop - oparent.offsetTop;
+                }
+                var iw= isleft ? iparentwidth - iL : handle.offsetWidth + iL;
                 var ih = istop ? iparentheight - iT : handle.offsetHeight + iT;
                 if (isleft) {
-                    oparent.style.left=iparentleft+iL+'px';
+                    // oparent.style.left=iparentleft+iL+'px';
+                    if(iparentleft + iL < _this.options.pointLimit.minLeft){
+                        oparent.style.left = _this.options.pointLimit.minLeft + 'px';
+                    }else{
+                        oparent.style.left = iparentleft + iL + 'px';
+                    }
                 };
                 if (istop) {
-                    oparent.style.top=iparenttop+iT+'px';
+                    // oparent.style.top=iparenttop+iT+'px';
+                    if(iparenttop + iT < _this.options.pointLimit.minTop){
+                        oparent.style.top = _this.options.pointLimit.minTop + 'px';
+                    }else{
+                        oparent.style.top = iparenttop + iT + 'px';
+                    }
                 };
-                if (iw<dragMinWidth) {
-                    iw=dragMinWidth
-                }else if (iw>maxw) {
-                    iw=maxw;
+                if (iw < _this.options.resizeMinWidth) {
+                    iw = _this.options.resizeMinWidth;
+                }else if (iw > maxw) {
+                    iw = maxw;
                 };
                 if (lookx) {
-                    oparent.style.width=iw+'px';
+                    oparent.style.width = iw + 'px';
                 };
-                if (ih<dragMinHeight) {
-                    ih=dragMinHeight;
-                }else if (ih>maxh) {
-                    ih=maxh;
+                if (ih < _this.options.resizeMinHeight) {
+                    ih = _this.options.resizeMinHeight;
+                }else if (ih > maxh) {
+                    ih = maxh;
                 };
                 if (looky) {
-                    oparent.style.height=ih+'px';
+                    oparent.style.height = ih + 'px';
                 };
-                if ((isleft && iw==dragMinWidth)||(istop && ih==dragMinHeight)) {
-                    document.onmousemove=null;
+                if ((isleft && iw == _this.options.resizeMinWidth)||(istop && ih == _this.options.resizeMinHeight)) {
+                    $(document).off("mousemove.resize");
                 };
                 _this.setResizeToolPosition();
+
+                if(_this.options.resizeCallback)//回调
+                    _this.options.resizeCallback();
                 return false;
-            };
-            document.onmouseup=function(){
-                document.onmousemove=null;
-                document.onmouseup=null;
-            };
+            });
+            $(document).on("mouseup.resize",function(){
+                $(document).off("mousemove.resize");
+                $(document).off("mouseup.resize");                
+                return false;
+            });
             return false;
-        };
+        });
     };
 
 
