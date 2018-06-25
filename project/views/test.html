@@ -112,6 +112,14 @@
                     console.log("resize");
                 }
             });
+            $('.drag').domResize('changeOptions',{
+                pointLimit:{
+                    minTop:0,
+                    minLeft:0,
+                    maxTop:$(".limit").innerHeight(),
+                    maxLeft:$(".limit").innerWidth()-0
+                },
+            });
             // var result = $('.drag').domResize('add',[1,2]);
             // var k = $('.drag').domResize('add',[1,2]).domResize('sub',[1,2]).domResize('mul',[1,2]); 
         }(jQuery));

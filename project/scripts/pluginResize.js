@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-22 23:36:53 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-25 14:42:25
+ * @Last Modified time: 2018-06-25 17:23:38
  */
 ;(function($, undefined){//undefined在老一辈的浏览器是不被支持的，直接使用会报错，js框架要考虑到兼容性，因此增加一个形参undefined
     'use strict' //使用js严格模式检查，使语法更规范
@@ -29,16 +29,25 @@
     function Resize(element,options){
         this.element = element;
         this.options = options;
-        console.log(this.options);
+        // console.log(this.options);
         this.init();
         
         return {
-            // add:$.proxy(this.add,this),
+            changeOptions:$.proxy(this.changeOptions,this),
         }
     };
     Resize.prototype.init = function(){//初始化
         this.createResizeTool();
         this.clickEvent();
+    };
+    Resize.prototype.changeOptions = function(new_options){
+        for(var p in new_options){
+            if(p in this.options){
+                this.options[p] = new_options[p];
+            }else{
+                $.error('No such option : '+p);  
+            }
+        }
     };
     Resize.prototype.createResizeTool = function(){//创建修改大小的工具
         var _this = this;
@@ -59,6 +68,7 @@
             "height":"10px",
             "background-color":_this.options.selectColor,
             "display":"none",
+            "pointer-events":"auto"
         });
     };
     Resize.prototype.setResizeToolPosition = function(){//设置修改大小工具的位置
@@ -222,8 +232,6 @@
             $(document).on("mousemove.resize",function(e){
                 var iL=e.clientX-disX;
                 var iT=e.clientY-disY;
-                // var maxw=document.documentElement.clientWidth-oparent.offsetLeft-2;
-                // var maxh=document.documentElement.clientHeight-oparent.offsetTop-2;
                 var maxw,maxh;
                 if(isleft){
                     maxw = (iparentleft - _this.options.pointLimit.minLeft) + iparentwidth;
@@ -238,7 +246,6 @@
                 var iw= isleft ? iparentwidth - iL : handle.offsetWidth + iL;
                 var ih = istop ? iparentheight - iT : handle.offsetHeight + iT;
                 if (isleft) {
-                    // oparent.style.left=iparentleft+iL+'px';
                     if(iparentleft + iL < _this.options.pointLimit.minLeft){
                         oparent.style.left = _this.options.pointLimit.minLeft + 'px';
                     }else{
@@ -246,7 +253,6 @@
                     }
                 };
                 if (istop) {
-                    // oparent.style.top=iparenttop+iT+'px';
                     if(iparenttop + iT < _this.options.pointLimit.minTop){
                         oparent.style.top = _this.options.pointLimit.minTop + 'px';
                     }else{
@@ -287,11 +293,12 @@
         });
     };
 
-
     $.fn[pluginName] = function(options,args){  
         this.each(function(){//需要对符合的每个dom元素绑定事件
             var _this = $.data(this,pluginName);
-            if(typeof options === 'string'){//如果传入的是字符串
+            if(!options || typeof options === 'object'){
+                $.data(this,pluginName, new Resize(this,$.extend(true,{},_options,options)));
+            }else if(typeof options === 'string'){//如果传入的是字符串
                 if(!_this){//未被初始化
                     $.error('Not initialized,can not call method : '+options);  
                 }else if(!$.isFunction(_this[options]) || options.charAt(0) === '_'){//如果插件api中不包括此函数，或者访问的是以下划线开头的私有函数
@@ -304,8 +311,6 @@
                 }
             }else if(typeof options === 'boolean'){//如果传入的是bool值
                 return _this;
-            }else if(typeof options === 'object'){
-                $.data(this,pluginName, new Resize(this,$.extend(true,{},_options,options)));
             }else{
                 $.error('The parameter '+options+' that can not be identified');//不能识别的参数  
             }
