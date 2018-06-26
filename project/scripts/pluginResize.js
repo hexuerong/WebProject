@@ -2,7 +2,7 @@
  * @Author: hexuerong 
  * @Date: 2018-06-22 23:36:53 
  * @Last Modified by: hexuerong
- * @Last Modified time: 2018-06-25 17:23:38
+ * @Last Modified time: 2018-06-26 09:45:05
  */
 ;(function($, undefined){//undefined在老一辈的浏览器是不被支持的，直接使用会报错，js框架要考虑到兼容性，因此增加一个形参undefined
     'use strict' //使用js严格模式检查，使语法更规范
@@ -14,6 +14,7 @@
         resizeable:true,//是否允许修改大小
         resizeMinWidth:0,//修改大小当前的最小宽度
         resizeMinHeight:0,//修改大小当前的最小高度
+        hideResizeTool:true,//resize-tool是否可以隐藏
         selectColor:'#0000ff',//选中元素时的边框颜色
         outline:true,//选中时是否需要outline
         outlineType:'dashed',//outline的类型，与css的线的类型相对应
@@ -34,11 +35,16 @@
         
         return {
             changeOptions:$.proxy(this.changeOptions,this),
+            setResizeToolPosition:$.proxy(this.setResizeToolPosition,this),
         }
     };
     Resize.prototype.init = function(){//初始化
         this.createResizeTool();
-        this.clickEvent();
+        if(this.options.hideResizeTool){
+            this.clickEvent();
+        }else{
+            this.setEvent();
+        }
     };
     Resize.prototype.changeOptions = function(new_options){
         for(var p in new_options){
@@ -116,18 +122,21 @@
             "cursor": "w-resize",                                    
         });
     };
+    Resize.prototype.setEvent = function(){
+        this.setResizeToolPosition();  
+        if(this.options.outline)
+            $(this.element).css("outline","1px "+this.options.outlineType+" "+this.options.selectColor);          
+        $(this.element).find(".resize-tool").show();
+        if(this.options.dragable)
+            this.onDrag();
+        if(this.options.resizeable)
+            this.onResize();
+    };
     Resize.prototype.clickEvent = function(){//当前元素的点击事件，呼出修改大小的工具
         var _this = this;        
         $(this.element).off("click.resize").on("click.resize",function(){
             if($(_this.element).find(".resize-tool").css("display") == "none"){
-                _this.setResizeToolPosition();  
-                if(_this.options.outline)
-                    $(this).css("outline","1px "+_this.options.outlineType+" "+_this.options.selectColor);          
-                $(this).find(".resize-tool").show();
-                if(_this.options.dragable)
-                    _this.onDrag();
-                if(_this.options.resizeable)
-                    _this.onResize();
+                _this.setEvent();
                 $(document).on("click.resize",function(){
                     _this.cancelResize();
                     return false;
