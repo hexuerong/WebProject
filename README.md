@@ -19,7 +19,7 @@ babel转es6会转成commonjs的规范，浏览器不支持commonjs，会报requi
 2. 多文件操作  
    把多个文件添加到 browserify 中，可以借助 node-glob 这个模块实现
 3. 使用 Watchify 提高速度
-```
+```js
     var watchify = require('watchify');
     var browserify = require('browserify');
     var gulp = require('gulp');
@@ -54,7 +54,7 @@ babel转es6会转成commonjs的规范，浏览器不支持commonjs，会报requi
     }
 ```
 4. **Babelify**
-```
+```js
 gulp.task('browserify', function() {
     return browserify({
             entries: 'project/scripts/add.js',
@@ -93,11 +93,11 @@ gulp 只有你需要熟知的参数标记，其他所有的参数标记只在一
 - **Task的特定参数标记**
 参考 [StackOverflow](https://stackoverflow.com/questions/23023650/is-it-possible-to-pass-a-flag-to-gulp-to-have-it-run-tasks-in-different-ways)。这里只写一种方式：
     在命令行中写：
-    ```
+    ```bash
     $ gulp buildJS --type develop
     ```
     在gulpfile.js中写：
-    ```
+    ```js
     gulp.task('buildJS',function(cb){
         if(gulp.env.type == "develop"){
             console.log("dddddddddddddddddddddd");
@@ -110,17 +110,17 @@ gulp 只有你需要熟知的参数标记，其他所有的参数标记只在一
 ## ES6
 ### es6模块化——import与export
 1. es6模块化会自动把一个js文件当做一个模块，不需要再对某个js进行类似以下的封装了。(注：es6模块会自动使用严格模式，不管你是否定义)
-```
+```js
 ;(function(){
     //your code
 })();
 ```
 改为：
-```
+```js
     //your code
 ```
 2. import存在变量提升，会把import提升到最顶上。
-```
+```js
 console.log(func);//此句不会报错
 import {func} from './main'
 console.log(func);
@@ -149,7 +149,7 @@ console.log(func);
     - 如果没有扩展名，将会为他添加.less扩展名，作为less导入。
 
     example:
-```
+```js
     @import "foo";      // foo.less 导入为less文件
     @import "foo.less"; // foo.less 导入为less文件
     @import "foo.php";  // foo.php  导入为less文件
@@ -175,11 +175,11 @@ example: `@import (optional, reference) "foo.less";`
 
 jQuery.extend() 函数用于将一个或多个对象的内容合并到目标对象。
 语法一：（方括号中的为可选参数）
-```
+```js
 $.extend( target [, object1 ] [, objectN ] )
 ```
 语法二：（指示是否深度合并）
-```
+```js
 $.extend( [deep ], target, object1 [, objectN ] )
 ```
 - deep	可选。 Boolean类型 指示是否深度合并对象，默认为false。如果该值为true，且多个对象的某个同名-属性也都是对象，则该"属性对象"的属性也将进行合并。
@@ -188,12 +188,12 @@ $.extend( [deep ], target, object1 [, objectN ] )
 - objectN	可选。 Object类型 第N个被合并的对象。
 
 常用于：**合并 defaults 和 options 对象，并且不修改 defaults 对象。这是常用的插件开发模式。** ***[js插件开发参考](https://www.jianshu.com/p/e65c246beac1)***
-```
+```js
 var result = $.extend(true,{},options)  //语义：将options深拷贝到‘{}’空对象中,并将结果赋值给result
 ```
 ### $.proxy 修改this指向
 该方法通常用于向上下文指向不同对象的元素添加事件。
-```
+```js
 jQuery.proxy( function, context )
 /**function将要改变上下文语境的函数。
 ** context函数的上下文语境(`this`)会被设置成这个 object 对象。
@@ -218,7 +218,7 @@ var objPerson = {
 $("button").click($.proxy(objPerson,"test"));
 ```
 ### call与apply方法（修改this指向）
-```
+```js
 function add(c,d){
     return this.a + this.b + c + d;
 }
