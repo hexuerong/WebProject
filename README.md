@@ -149,7 +149,7 @@ console.log(func);
     - 如果没有扩展名，将会为他添加.less扩展名，作为less导入。
 
     example:
-```js
+```less
     @import "foo";      // foo.less 导入为less文件
     @import "foo.less"; // foo.less 导入为less文件
     @import "foo.php";  // foo.php  导入为less文件
@@ -167,6 +167,24 @@ console.log(func);
 
 多个关键字 @import 是允许的，你必须使用逗号分隔关键字：
 example: `@import (optional, reference) "foo.less";`
+[页面出现滚动条时没有跳动demo](https://www.zhangxinxu.com/wordpress/2015/01/css-page-scrollbar-toggle-center-no-jumping/)
+终极版本：
+```css
+html {
+  overflow-y: scroll;
+}
+:root {
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+:root body {
+  position: absolute;
+}
+body {
+  width: 100vw;
+  overflow: hidden;
+}
+```
 ## JS和jquery中部分老是记不住的知识
 ### $.extend 拷贝
 注意：
