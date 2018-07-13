@@ -1,6 +1,6 @@
 var http = require('http');
 
-http.createServer(function (request, response) {
+/* http.createServer(function (request, response) {
 
     // 发送 HTTP 头部 
     // HTTP 状态值: 200 : OK
@@ -9,7 +9,16 @@ http.createServer(function (request, response) {
 
     // 发送响应数据 "Hello World"
     response.end('Hello World(这是一个gulp的browser-sync实现的代理服务器)\n');
-}).listen(8888);
+}).listen(8888); */
 
 // 终端打印如下信息
-console.log('Server running at http://127.0.0.1:8888/');
+// console.log('Server running at http://127.0.0.1:8888/');
+
+http.createServer(function (req, res) {
+  res.writeHead(302, {
+    // 'Location': 'http://www.homestarrunner.com/sbsite/'
+    'Location': 'https://www.baidu.com'
+  });
+  res.end();
+}).listen(3000, "127.0.0.1");
+console.log('Server running at http://127.0.0.1:3000/');
